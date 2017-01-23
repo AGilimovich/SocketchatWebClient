@@ -1,0 +1,32 @@
+<div class="login-background">
+
+    <div class="login-box" ng-controller="RegistrationController">
+        <!--<div class="form-group">-->
+        <!--<label for="server">Server:</label>-->
+        <!--<input type="text" class="form-control" id="server" value="localhost:8080" ng-model="server">-->
+        <!--</div>-->
+
+        <div class="form-group">
+            <label for="login">Name:</label>
+            <input type="text" class="form-control" id="login" ng-model="name">
+        </div>
+
+        <div class="form-group">
+            <label for="password">Password:</label>
+            <input type="text" class="form-control" id="password" ng-model="password">
+        </div>
+
+        <div class="form-group">
+            <input type="button" class="form-control button-login" value="Register"
+                   ng-click="register(name, password)">
+        </div>
+        <div class="centered"><a href="" ng-click="login()">Login </a>
+
+        </div>
+
+        <div class="centered"><span style="color: red">{{regStatus().description}}</span></div>
+
+
+    </div>
+
+</div>

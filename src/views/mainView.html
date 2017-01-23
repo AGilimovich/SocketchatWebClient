@@ -1,0 +1,44 @@
+<div ng-controller="MainController">
+
+
+    <div class="navbar navbar-default">
+        <div class="navbar-inner">
+            <a class="brand">SocketChat</a>
+        </div>
+    </div>
+    <div class="col-md-2">
+        <div class="row">
+
+            <div class="btn-group-vertical contact" role="group" aria-label="...">
+                <span ng-show="isEmptyContactsList()">No users online</span>
+                <button type="button" class="btn btn-default contact" ng-repeat="contact in contacts()"
+                        ng-click="setActive(contact)">{{contact.name}}
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="col-md-10 chat-section">
+        <div class="row">
+            <div class="chat-pane">Welcome to Socket Chat, {{name}}!
+
+                <div class="row" ng-repeat="message in messages" ng-style="">
+                    <div class="col-md-4 chat-entry"> <{{message.time | date : "dd.MM.yy HH:mm:ss"}}>{{message.sender}}:
+                    </div>
+                    <div class="col-md-8 chat-entry">{{message.content}}</div>
+                    </divrow>
+
+                </div>
+            </div>
+            <div class="input-group">
+                <input type="text" class="form-control" placeholder="Message" ng-model="content">
+            <span class="input-group-btn">
+                <button class="btn btn-secondary" type="button" ng-click="sendMessage(content)">Send</button>
+        </span>
+            </div>
+
+
+        </div>
+    </div>
+</div>

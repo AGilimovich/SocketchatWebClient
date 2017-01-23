@@ -1,0 +1,35 @@
+<div class="login-background">
+
+    <div class="login-box" ng-controller="LoginController">
+        <!--<div class="form-group">-->
+        <!--<label for="server">Server:</label>-->
+        <!--<input type="text" class="form-control" id="server" value="localhost:8080" ng-model="server">-->
+        <!--</div>-->
+
+        <div class="form-group">
+            <label for="login">Name:</label>
+            <input type="text" class="form-control" id="login" ng-model="name">
+        </div>
+
+        <div class="form-group">
+            <label for="password">Password:</label>
+            <input type="text" class="form-control" id="password" ng-model="password">
+        </div>
+
+        <div class="form-group">
+            <input type="button" class="form-control button-login" value="Login"
+                   ng-click="login(name, password, doRemember)">
+
+            <!--<div class="centered"><span style="color: red">{{connectionStatusMessage().message}}</span></div>-->
+            <div class="centered"><span style="color: red">{{authStatus().description}}</span></div>
+
+
+            <label><input type="checkbox" class="checkbox-remember" ng-model="doRemember"> Remember me</label>
+        </div>
+
+        <div class="centered"><a href="" ng-click="registration()">Registration </a>|<a href=""> Restore
+            password</a></div>
+
+    </div>
+
+</div>
