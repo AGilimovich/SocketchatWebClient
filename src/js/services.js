@@ -1,12 +1,9 @@
 // 'use strict';
 
 angular.module('socketChat.services', [])
-    .factory('ConnectionService', function (MessageParserService) {
+    .factory('ConnectionService', function (MessageParserService, CONNECTION_STATUS) {
         var socket;
-        const CONNECTION_STATUS = {
-            CONNECTED: {code: 0, message: "Connected"},
-            NO_CONNECTION: {code: 1, message: "No connection"}
-        }
+
 
         var connectionStatus = CONNECTION_STATUS.NO_CONNECTION;
 
@@ -35,9 +32,7 @@ angular.module('socketChat.services', [])
                 return socket;
             },
 
-            CONNECTION_STATUS: function () {
-                return CONNECTION_STATUS;
-            },
+
             send: function (message) {
                 if (socket != undefined) {
                     console.log(JSON.stringify(message));
@@ -53,13 +48,8 @@ angular.module('socketChat.services', [])
     })
 
 
-    .factory('MessageFormatterService', function () {
-        var MESSAGE_TYPE = {
-            AUTH: 0,
-            CHAT: 1,
-            CONTACTS: 2,
-            REGISTRATION: 3
-        }
+    .factory('MessageFormatterService', function (MESSAGE_TYPE) {
+
 
         function ChatMessage(receiver, content) {
             this.type = MESSAGE_TYPE.CHAT;
@@ -103,33 +93,11 @@ angular.module('socketChat.services', [])
         }
     })
 
-    .
-    constant("REG_STATUS", {
-        REGISTERED: {code: 0, description: "Successfully registered"},
-        ILLEGAL_PASSWORD: {code: 1, description: "Illegal password"},
-        ILLEGAL_NAME: {code: 2, description: "Illegal name"},
-        ILLEGAL_CREDENTIALS: {code: 3, description: "Illegal name and password"},
-        NAME_EXISTS: {code: 4, description: "User with entered name already exists"}
-
-    })
 
     .factory('RegistrationService', function (MessageFormatterService) {
-        //var REG_STATUS = {
-        //    REGISTERED: {code: 0, description: "Successfully registered"},
-        //    ILLEGAL_PASSWORD: {code: 1, description: "Illegal password"},
-        //    ILLEGAL_NAME: {code: 2, description: "Illegal name"},
-        //    ILLEGAL_CREDENTIALS: {code: 3, description: "Illegal name and password"},
-        //    NAME_EXISTS: {code: 4, description: "User with entered name already exists"}
-        //}
-
-
-
 
         var regStatus;
         return {
-            REG_STATUS: function () {
-                return REG_STATUS;
-            },
             register: function (login, password, service) {
                 service.send(MessageFormatterService.newRegMessage(login, password));
 
@@ -142,22 +110,14 @@ angular.module('socketChat.services', [])
             }
         }
     })
-    .factory('AuthenticationService', function (MessageFormatterService) {
-        var AUTH_STATUS = {
-            AUTHENTICATED: {code: 0, description: "Successfully authenticated"},
-            INVALID_CREDENTIALS: {code: 1, description: "Invalid credentials"}
-        }
+    .factory('AuthenticationService', function (MessageFormatterService, AUTH_STATUS) {
 
         var name;
-
         var authStatus;
         var onSuccess1;
 
         return {
 
-            AUTH_STATUS: function () {
-                return AUTH_STATUS;
-            },
             authenticate: function (login, password, socket, onSuccess) {
                 socket.send(JSON.stringify(MessageFormatterService.newAuthMessage(login, password)));
                 onSuccess1 = onSuccess;
@@ -221,46 +181,41 @@ angular.module('socketChat.services', [])
     })
 
 
-    .factory('MessageParserService', function (AuthenticationService, RegistrationService, MessageFormatterService, ContactService, ChatWindowService) {
+    .factory('MessageParserService', function (AuthenticationService, RegistrationService, MessageFormatterService, ContactService, ChatWindowService, MESSAGE_TYPE, REG_STATUS) {
         return {
             parse: function (message, callback) {
                 var parsedMessage = JSON.parse(message.data);
 
 
-                if (parsedMessage.type === MessageFormatterService.MESSAGE_TYPE().CHAT)
+                if (parsedMessage.type === MESSAGE_TYPE.CHAT)
                     ChatWindowService.addMessageToOutputPane(parsedMessage, callback);
-                else if (parsedMessage.type === MessageFormatterService.MESSAGE_TYPE().CONTACTS) {
+                else if (parsedMessage.type === MESSAGE_TYPE.CONTACTS) {
                     ContactService.update(parsedMessage.user, callback)
-                    //ContactService.emptyContacts(callback);
-                    //if (parsedMessage.user.length !== 0)
-                    //    for (var i = 0; i < parsedMessage.user.length; i++) {
-                    //        ContactService.addContact(parsedMessage.user[i], callback);
-                    //    }
-                } else if (parsedMessage.type === MessageFormatterService.MESSAGE_TYPE().AUTH) {
+                } else if (parsedMessage.type === MESSAGE_TYPE.AUTH) {
                     AuthenticationService.handleAuthResponse(parsedMessage.status);
 
 
-                } else if (parsedMessage.type === MessageFormatterService.MESSAGE_TYPE().REGISTRATION) {
+                } else if (parsedMessage.type === MESSAGE_TYPE.REGISTRATION) {
                     switch (parsedMessage.status) {
                         case RegistrationService.REG_STATUS().REGISTERED.code:
 
-                            RegistrationService.setRegStatus(RegistrationService.REG_STATUS().REGISTERED);
+                            RegistrationService.setRegStatus(REG_STATUS.REGISTERED);
                             break;
                         case RegistrationService.REG_STATUS().ILLEGAL_PASSWORD.code:
 
-                            RegistrationService.setRegStatus(RegistrationService.REG_STATUS().ILLEGAL_PASSWORD);
+                            RegistrationService.setRegStatus(REG_STATUS.ILLEGAL_PASSWORD);
                             break;
                         case RegistrationService.REG_STATUS().ILLEGAL_NAME.code:
 
-                            RegistrationService.setRegStatus(RegistrationService.REG_STATUS().ILLEGAL_NAME);
+                            RegistrationService.setRegStatus(REG_STATUS.ILLEGAL_NAME);
                             break;
                         case RegistrationService.REG_STATUS().ILLEGAL_CREDENTIALS.code:
 
-                            RegistrationService.setRegStatus(RegistrationService.REG_STATUS().ILLEGAL_CREDENTIALS);
+                            RegistrationService.setRegStatus(REG_STATUS.ILLEGAL_CREDENTIALS);
                             break;
                         case RegistrationService.REG_STATUS().NAME_EXISTS.code:
 
-                            RegistrationService.setRegStatus(RegistrationService.REG_STATUS().NAME_EXISTS);
+                            RegistrationService.setRegStatus(REG_STATUS.NAME_EXISTS);
                             break;
 
 

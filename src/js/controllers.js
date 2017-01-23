@@ -1,15 +1,14 @@
 // 'use strict';
 
 angular.module('socketChat.controllers', [])
-    .controller('ConnectionController', function ($rootScope, $scope, ConnectionService, ContactService, $state) {
+    .controller('ConnectionController', function ($rootScope, $scope, ConnectionService, CONNECTION_STATUS, ContactService, $state, $timeout) {
 
-        if (ConnectionService.getStatus() === ConnectionService.CONNECTION_STATUS().NO_CONNECTION) {
-            setTimeout(function () {
+        if (ConnectionService.getStatus() === CONNECTION_STATUS.NO_CONNECTION) {
+            $timeout(function () {
                 $rootScope.socket = ConnectionService.connect("ws://localhost:8080", function () {
                     $state.go("login")
                 }, function () {
                     $rootScope.$apply();
-                    console.dir(ContactService.getContacts());
                 }, function () {
                     $scope.showError = true;
                     $scope.$apply();
@@ -50,8 +49,11 @@ angular.module('socketChat.controllers', [])
             } else return false;
         }
 
-        $scope.setActive = function (contact) {
+        $scope.activeButton = null;
+        $scope.setActive = function (contact, index) {
             ContactService.setActiveContact(contact);
+            $scope.activeButton = index;
+            $scope.$apply();
         }
 
         $scope.name = AuthenticationService.getName();

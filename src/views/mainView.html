@@ -11,8 +11,9 @@
 
             <div class="btn-group-vertical contact" role="group" aria-label="...">
                 <span ng-show="isEmptyContactsList()">No users online</span>
-                <button type="button" class="btn btn-default contact" ng-repeat="contact in contacts()"
-                        ng-click="setActive(contact)">{{contact.name}}
+                <button type="button" class="btn btn-default contact"
+                         ng-repeat="contact in contacts()" ng-class="{'active': activeButton === $index, '': activeButton !== $index}"
+                        ng-click="setActive(contact, $index)">{{contact.name}}
                 </button>
             </div>
 
