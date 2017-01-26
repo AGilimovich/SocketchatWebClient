@@ -3,12 +3,16 @@
 angular.module('socketChat.controllers', [])
     .controller('ConnectionController', function ($rootScope, $scope, ConnectionService, CONNECTION_STATUS, ContactService, $state, $timeout) {
 
+
         if (ConnectionService.getStatus() === CONNECTION_STATUS.NO_CONNECTION) {
             $timeout(function () {
-                $rootScope.socket = ConnectionService.connect("ws://localhost:8080", function () {
-                    $state.go("login")
+                $scope.socket = ConnectionService.connect("ws://localhost:8080", function () {
+                    $scope.$broadcast('connected', {
+                        socketObj: $scope.socket
+                    });
+                    $state.go("login");
                 }, function () {
-                    $rootScope.$apply();
+                    $scope.$broadcast('incomingMessage');
                 }, function () {
                     $scope.showError = true;
                     $scope.$apply();
@@ -19,9 +23,16 @@ angular.module('socketChat.controllers', [])
 
     .controller('LoginController', function ($scope, $rootScope, AuthenticationService, $state) {
 
+        $scope.$on('incomingMessage', function (events, args) {
+            console.log(events, args);
+            $scope.$apply();
+        })
+        $scope.$on('connected', function (socket) {
+            $scope.socket = socket;
+        })
 
         $scope.login = function (name, password, doRemember) {
-            AuthenticationService.authenticate(name, password, $rootScope.socket, function () {
+            AuthenticationService.authenticate(name, password, $scope.socket, function () {
                 $state.go("main");
             });
             //TODO doRemember
@@ -34,6 +45,15 @@ angular.module('socketChat.controllers', [])
     })
 
     .controller('MainController', function ($scope, ContactService, ChatWindowService, ConnectionService, MessageFormatterService, AuthenticationService) {
+        $scope.$on('incomingMessage', function (events, args) {
+            console.log(events, args);
+            $scope.$apply();
+        })
+        $scope.$on('connected', function (socket) {
+            $scope.socket = socket;
+        })
+
+
         $scope.contacts = ContactService.getContacts;
         $scope.messages = ChatWindowService.getOutputPaneContent();
         $scope.sendMessage = function (content) {
@@ -53,7 +73,6 @@ angular.module('socketChat.controllers', [])
         $scope.setActive = function (contact, index) {
             ContactService.setActiveContact(contact);
             $scope.activeButton = index;
-            $scope.$apply();
         }
 
         $scope.name = AuthenticationService.getName();
@@ -62,6 +81,12 @@ angular.module('socketChat.controllers', [])
 
 
     .controller("RegistrationController", function ($scope, RegistrationService, ConnectionService, $state) {
+        $scope.$on('incomingMessage', function () {
+            $scope.$apply();
+        })
+        $scope.$on('connected', function (socket) {
+            $scope.socket = socket;
+        })
 
         $scope.regStatus = RegistrationService.getRegStatus;
         $scope.login = function () {

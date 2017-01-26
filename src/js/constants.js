@@ -15,7 +15,7 @@ angular.module('socketChat.constants', [])
     })
     .constant('REG_STATUS', {
         REGISTERED: {code: 0, description: "Successfully registered"},
-        ILLEGAL_PASSWORD: {code: 1, description: "Illegal password"},
+        ILLEGAL_PASSWORD: {code: 1, description: "Illegal password: password should contain 5-15 symbols"},
         ILLEGAL_NAME: {code: 2, description: "Illegal name"},
         ILLEGAL_CREDENTIALS: {code: 3, description: "Illegal name and password"},
         NAME_EXISTS: {code: 4, description: "User with entered name already exists"}
