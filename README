@@ -1,4 +1,0 @@
-This is a user web-interface for websocket-based messenger app.
-To make webSocketApp work you need:
- 1)to run the server server from this repository: https://github.com/AGilimovich/socketChat.git.
- 2)to open file "index.html" in your web-browser;
