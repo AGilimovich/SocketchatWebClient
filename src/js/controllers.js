@@ -44,7 +44,7 @@ angular.module('socketChat.controllers', [])
 
     })
 
-    .controller('MainController', function ($scope, ContactService, ChatWindowService, ConnectionService, MessageFormatterService, AuthenticationService) {
+    .controller('MainController', function ($scope, ContactService, ChatWindowService, ConnectionService, MessageFormatterService, AuthenticationService, UserService) {
         $scope.$on('incomingMessage', function (events, args) {
             console.log(events, args);
             $scope.$apply();
@@ -59,7 +59,7 @@ angular.module('socketChat.controllers', [])
         $scope.sendMessage = function (content) {
             var receiver = ContactService.getActiveContact();
             ConnectionService.send(MessageFormatterService.newChatMessage(receiver, content));
-            ChatWindowService.addOutgoingMessageToOutput(AuthenticationService.getName(), receiver, content);
+            ChatWindowService.addOutgoingMessageToOutput(receiver, content);
         }
 
 
@@ -75,7 +75,7 @@ angular.module('socketChat.controllers', [])
             $scope.activeButton = index;
         }
 
-        $scope.name = AuthenticationService.getName();
+        $scope.name = UserService.getOwner().login;
 
     })
 

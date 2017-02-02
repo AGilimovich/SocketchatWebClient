@@ -48,12 +48,13 @@ angular.module('socketChat.services', [])
     })
 
 
-    .factory('MessageFormatterService', function (MESSAGE_TYPE) {
+    .factory('MessageFormatterService', function (MESSAGE_TYPE, UserService) {
 
 
         function ChatMessage(receiver, content) {
             this.type = MESSAGE_TYPE.CHAT;
             this.receiver = receiver.id;
+            this.sender = UserService.getOwner().id;
             this.content = content;
         }
 
@@ -84,14 +85,14 @@ angular.module('socketChat.services', [])
             }
         }
     })
-    .factory('ChatService', function () {
-        return {
-            chat: function (receiver, content) {
-                if (AuthenticationService.getAuthStatus() === AuthenticationService.AUTH_STATUS().AUTHENTICATED)
-                    ConnectionService.sendMessage(MessageFormatterService.newChatMessage(receiver, content));
-            }
-        }
-    })
+    //.factory('ChatService', function (AUTH_STATUS) {
+    //    return {
+    //        chat: function (receiver, content) {
+    //            if (AuthenticationService.getAuthStatus() === AUTH_STATUS.AUTHENTICATED)
+    //                ConnectionService.sendMessage(MessageFormatterService.newChatMessage(receiver, content));
+    //        }
+    //    }
+    //})
 
 
     .factory('RegistrationService', function (MessageFormatterService) {
@@ -107,12 +108,39 @@ angular.module('socketChat.services', [])
             },
             getRegStatus: function () {
                 return regStatus;
+            },
+            handleRegResponse: function (response) {
+
+                switch (response.status) {
+                    case REG_STATUS.REGISTERED.code:
+
+                        regStatus = REG_STATUS.REGISTERED;
+                        break;
+                    case REG_STATUS.ILLEGAL_PASSWORD.code:
+
+                        regStatus = REG_STATUS.ILLEGAL_PASSWORD;
+                        break;
+                    case REG_STATUS.ILLEGAL_NAME.code:
+
+                        regStatus = REG_STATUS.ILLEGAL_NAME;
+                        break;
+                    case REG_STATUS.ILLEGAL_CREDENTIALS.code:
+
+                        regStatus = REG_STATUS.ILLEGAL_CREDENTIALS;
+                        break;
+                    case REG_STATUS.NAME_EXISTS.code:
+
+                        regStatus = REG_STATUS.NAME_EXISTS;
+                        break;
+
+
+                }
+
             }
         }
     })
-    .factory('AuthenticationService', function (MessageFormatterService, AUTH_STATUS) {
+    .factory('AuthenticationService', function (MessageFormatterService, AUTH_STATUS, UserService) {
 
-        var name;
         var authStatus;
         var onSuccess1;
 
@@ -121,16 +149,18 @@ angular.module('socketChat.services', [])
             authenticate: function (login, password, socket, onSuccess) {
                 socket.send(JSON.stringify(MessageFormatterService.newAuthMessage(login, password)));
                 onSuccess1 = onSuccess;
-                name = login;
+
             },
             getAuthStatus: function () {
                 return authStatus;
             },
-            handleAuthResponse: function (status) {
-                switch (status) {
+            handleAuthResponse: function (response) {
+                console.log(response);
+                switch (response.status) {
                     case AUTH_STATUS.AUTHENTICATED.code:
-                        authStatus = status;
+                        authStatus = response.status;
                         onSuccess1();
+                        UserService.newOwner(response.id, response.login, response.name, response.email, response.friends);
                         break;
                     case AUTH_STATUS.INVALID_CREDENTIALS.code:
                         authStatus = status;
@@ -145,20 +175,20 @@ angular.module('socketChat.services', [])
     })
 
 
-    .factory('ChatWindowService', function () {
+    .factory('ChatWindowService', function (UserService) {
         var outputPaneContent = [];
 
-        function ChatMessage(sender, receiver, content) {
-            this.time = new Date();
+        function IncomingChatMessage(sender, content, time) {
+            this.time = time;
             this.sender = sender;
-            this.receiver = receiver;
+            this.receiver = UserService.getOwner().login;
             this.content = content;
         }
 
-        function ChatMessage(sender, receiver, content, time) {
+        function OutgoingChatMessage(receiver, content) {
             this.time = new Date();
-            this.sender = sender;
-
+            this.sender = UserService.getOwner().login;
+            this.receiver = receiver;
             this.content = content;
         }
 
@@ -168,12 +198,12 @@ angular.module('socketChat.services', [])
                 return outputPaneContent;
             },
             addMessageToOutputPane: function (parsedMessage, callback) {
-                var message = new ChatMessage(parsedMessage.sender, new Date(parsedMessage.time), parsedMessage.content)
+                var message = new IncomingChatMessage(parsedMessage.sender, parsedMessage.content, parsedMessage.time)
                 outputPaneContent.push(message);
                 callback();
             },
-            addOutgoingMessageToOutput: function (sender, receiver, content) {
-                var message = new ChatMessage(sender, receiver, content, new Date());
+            addOutgoingMessageToOutput: function (receiver, content) {
+                var message = new OutgoingChatMessage(receiver, content);
                 outputPaneContent.push(message);
             }
         }
@@ -186,40 +216,14 @@ angular.module('socketChat.services', [])
             parse: function (message, callback) {
                 var parsedMessage = JSON.parse(message.data);
 
-
                 if (parsedMessage.type === MESSAGE_TYPE.CHAT)
                     ChatWindowService.addMessageToOutputPane(parsedMessage, callback);
                 else if (parsedMessage.type === MESSAGE_TYPE.CONTACTS) {
                     ContactService.update(parsedMessage.user, callback)
                 } else if (parsedMessage.type === MESSAGE_TYPE.AUTH) {
-                    AuthenticationService.handleAuthResponse(parsedMessage.status);
-
-
+                    AuthenticationService.handleAuthResponse(parsedMessage);
                 } else if (parsedMessage.type === MESSAGE_TYPE.REGISTRATION) {
-                    switch (parsedMessage.status) {
-                        case RegistrationService.REG_STATUS().REGISTERED.code:
-
-                            RegistrationService.setRegStatus(REG_STATUS.REGISTERED);
-                            break;
-                        case RegistrationService.REG_STATUS().ILLEGAL_PASSWORD.code:
-
-                            RegistrationService.setRegStatus(REG_STATUS.ILLEGAL_PASSWORD);
-                            break;
-                        case RegistrationService.REG_STATUS().ILLEGAL_NAME.code:
-
-                            RegistrationService.setRegStatus(REG_STATUS.ILLEGAL_NAME);
-                            break;
-                        case RegistrationService.REG_STATUS().ILLEGAL_CREDENTIALS.code:
-
-                            RegistrationService.setRegStatus(REG_STATUS.ILLEGAL_CREDENTIALS);
-                            break;
-                        case RegistrationService.REG_STATUS().NAME_EXISTS.code:
-
-                            RegistrationService.setRegStatus(REG_STATUS.NAME_EXISTS);
-                            break;
-
-
-                    }
+                    RegistrationService.handleRegResponse(parsedMessage);
                 }
 
             }
@@ -227,7 +231,7 @@ angular.module('socketChat.services', [])
     })
 
     .
-    factory('ContactService', function () {
+    factory('ContactService', function (UserService) {
         var contacts = [];
         var activeContact;
 
@@ -267,7 +271,8 @@ angular.module('socketChat.services', [])
                 if (users.length !== 0) {
                     contacts = [];
                     for (var i = 0; i < users.length; i++) {
-                        this.addContact(users[i]);
+                        var user = UserService.createUser(users[i].id, users[i].login, users[i].name, null);//TODO email
+                        this.addContact(user);
                     }
                     callback();
                 }
@@ -275,6 +280,29 @@ angular.module('socketChat.services', [])
             }
 
 
+        }
+    })
+    .factory('UserService', function () {
+        var owner = {};
+
+        function User(id, login, name, email) {
+            this.id = id;
+            this.login = login;
+            this.name = name;
+            this.email = email;
+
+        }
+
+        return {
+            newOwner: function (id, login, name, email) {
+                owner = new User(id, login, name, email);
+            },
+            getOwner: function () {
+                return owner;
+            },
+            createUser: function (id, login, name, email) {
+                return new User(id, login, name, email);
+            }
         }
     })
 

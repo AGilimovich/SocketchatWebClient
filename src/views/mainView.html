@@ -13,7 +13,7 @@
                 <span ng-show="isEmptyContactsList()">No users online</span>
                 <button type="button" class="btn btn-default contact"
                          ng-repeat="contact in contacts()" ng-class="{'active': activeButton === $index, '': activeButton !== $index}"
-                        ng-click="setActive(contact, $index)">{{contact.name}}
+                        ng-click="setActive(contact, $index)">{{contact.login}}
                 </button>
             </div>
 
