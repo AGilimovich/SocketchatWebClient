@@ -44,7 +44,7 @@ angular.module('socketChat.controllers', [])
 
     })
 
-    .controller('MainController', function ($scope, ContactService, ChatWindowService, ConnectionService, MessageFormatterService, AuthenticationService, UserService) {
+    .controller('MainController', function ($scope, $state, ContactService, ChatWindowService, ConnectionService, MessageFormatterService, AuthenticationService, UserService) {
         $scope.$on('incomingMessage', function (events, args) {
             console.log(events, args);
             $scope.$apply();
@@ -76,6 +76,11 @@ angular.module('socketChat.controllers', [])
         }
 
         $scope.name = UserService.getOwner().login;
+        $scope.logout = function () {
+            ConnectionService.send(MessageFormatterService.newLogoutMessage());
+            $state.go("login");
+        }
+
 
     })
 

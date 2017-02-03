@@ -70,6 +70,11 @@ angular.module('socketChat.services', [])
             this.password = password;
         }
 
+        function LogoutMessage() {
+            this.type = MESSAGE_TYPE.LOGOUT;
+            this.sender = UserService.getOwner().id;
+        }
+
         return {
             MESSAGE_TYPE: function () {
                 return MESSAGE_TYPE;
@@ -82,17 +87,12 @@ angular.module('socketChat.services', [])
             },
             newRegMessage: function (name, password) {
                 return new RegMessage(name, password);
+            },
+            newLogoutMessage: function () {
+                return new LogoutMessage();
             }
         }
     })
-    //.factory('ChatService', function (AUTH_STATUS) {
-    //    return {
-    //        chat: function (receiver, content) {
-    //            if (AuthenticationService.getAuthStatus() === AUTH_STATUS.AUTHENTICATED)
-    //                ConnectionService.sendMessage(MessageFormatterService.newChatMessage(receiver, content));
-    //        }
-    //    }
-    //})
 
 
     .factory('RegistrationService', function (MessageFormatterService) {

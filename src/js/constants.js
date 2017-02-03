@@ -11,7 +11,8 @@ angular.module('socketChat.constants', [])
         AUTH: 0,
         CHAT: 1,
         CONTACTS: 2,
-        REGISTRATION: 3
+        REGISTRATION: 3,
+        LOGOUT: 4
     })
     .constant('REG_STATUS', {
         REGISTERED: {code: 0, description: "Successfully registered"},

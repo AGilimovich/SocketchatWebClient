@@ -1,10 +1,12 @@
 <div ng-controller="MainController">
 
 
-    <div class="navbar navbar-default">
-        <div class="navbar-inner">
-            <a class="brand">SocketChat</a>
-        </div>
+    <div class="my-navbar navbar-light">
+        <a class="navbar-brand" href="#">SocketChat</a>
+        <form class="my-navform ">
+            <button class="btn btn-danger button-logout" ng-click="logout()">Logout</button>
+        </form>
+
     </div>
     <div class="col-md-2">
         <div class="row">
@@ -12,7 +14,8 @@
             <div class="btn-group-vertical contact" role="group" aria-label="...">
                 <span ng-show="isEmptyContactsList()">No users online</span>
                 <button type="button" class="btn btn-default contact"
-                         ng-repeat="contact in contacts()" ng-class="{'active': activeButton === $index, '': activeButton !== $index}"
+                        ng-repeat="contact in contacts()"
+                        ng-class="{'active': activeButton === $index, '': activeButton !== $index}"
                         ng-click="setActive(contact, $index)">{{contact.login}}
                 </button>
             </div>

@@ -6456,7 +6456,9 @@ button.close {
 .modal-header:before,
 .modal-header:after,
 .modal-footer:before,
-.modal-footer:after {
+.modal-footer:after,
+.my-navbar:before,
+.my-navbar:after {
   content: " ";
   display: table;
 }
@@ -6475,7 +6477,8 @@ button.close {
 .pager:after,
 .panel-body:after,
 .modal-header:after,
-.modal-footer:after {
+.modal-footer:after,
+.my-navbar:after {
   clear: both;
 }
 .center-block {
@@ -6781,4 +6784,79 @@ body > div > div {
 .contact {
   width: 100%;
   text-align: left;
+}
+.chat-entry {
+  text-align: left;
+}
+.my-navbar {
+  position: relative;
+  min-height: 50px;
+  margin-bottom: 28px;
+  border: 1px solid transparent;
+  font-size: 20px;
+  background-color: lightgray;
+}
+@media (min-width: 768px) {
+  .my-navbar {
+    border-radius: 4px;
+  }
+}
+.my-navbar > * {
+  font-size: 20px;
+}
+.my-navform {
+  float: right;
+}
+@media (min-width: 768px) {
+  .my-navform .form-group {
+    display: inline-block;
+    margin-bottom: 0;
+    vertical-align: middle;
+  }
+  .my-navform .form-control {
+    display: inline-block;
+    width: auto;
+    vertical-align: middle;
+  }
+  .my-navform .form-control-static {
+    display: inline-block;
+  }
+  .my-navform .input-group {
+    display: inline-table;
+    vertical-align: middle;
+  }
+  .my-navform .input-group .input-group-addon,
+  .my-navform .input-group .input-group-btn,
+  .my-navform .input-group .form-control {
+    width: auto;
+  }
+  .my-navform .input-group > .form-control {
+    width: 100%;
+  }
+  .my-navform .control-label {
+    margin-bottom: 0;
+    vertical-align: middle;
+  }
+  .my-navform .radio,
+  .my-navform .checkbox {
+    display: inline-block;
+    margin-top: 0;
+    margin-bottom: 0;
+    vertical-align: middle;
+  }
+  .my-navform .radio label,
+  .my-navform .checkbox label {
+    padding-left: 0;
+  }
+  .my-navform .radio input[type="radio"],
+  .my-navform .checkbox input[type="checkbox"] {
+    position: relative;
+    margin-left: 0;
+  }
+  .my-navform .has-feedback .form-control-feedback {
+    top: 0;
+  }
+}
+.button-logout {
+  margin: 5px;
 }
