@@ -7,22 +7,22 @@ angular.module('socketChat', ['ui.router', 'socketChat.controllers', 'socketChat
 
             .state('connection', {
                 url: '/connection',
-                templateUrl: 'src/views/connectionView.html'
+                templateUrl: 'src/views/connectionView/connectionView.html'
             })
             .state('main', {
                     url: '/main',
-                    templateUrl: 'src/views/mainView.html'
+                    templateUrl: 'src/views/mainView/mainView.html'
                 }
             )
 
             .state('login', {
                 url: '/login',
-                templateUrl: 'src/views/loginView.html'
+                templateUrl: 'src/views/loginView/loginView.html'
             })
 
             .state('registration', {
                 url: '/registration',
-                templateUrl: 'src/views/registrationView.html'
+                templateUrl: 'src/views/registrationView/registrationView.html'
             })
 
 

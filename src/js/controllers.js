@@ -94,11 +94,11 @@ angular.module('socketChat.controllers', [])
         })
 
         $scope.regStatus = RegistrationService.getRegStatus;
-        $scope.login = function () {
+        $scope.toLogin = function () {
             $state.go("login");
         }
-        $scope.register = function (name, password) {
-            RegistrationService.register(name, password, ConnectionService)
+        $scope.register = function (login, password, email, name, birthday, address, phone) {
+            RegistrationService.register(login, password, email, name, birthday, address, phone, ConnectionService);//TODO add additional data
 
         };
     })

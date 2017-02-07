@@ -11,21 +11,20 @@ angular.module('socketChat.services', [])
             connect: function (server, onConnect, onMessage, onError) {
                 socket = new WebSocket(server);
                 socket.onopen = function () {
-                    //console.log("opened");
                     connectionStatus = CONNECTION_STATUS.CONNECTED;
                     onConnect();
                 }
                 socket.onmessage = function (message) {
-                    //console.log("received: " + message);
+                    console.log("received: " + message); //TODO delete
                     MessageParserService.parse(message, onMessage);
 
                 }
                 socket.onerror = function (e) {
-                    console.log("error");
+                    console.log("error:" + e.code + "," + e.reason); //TODO delete
                     onError();
                 }
                 socket.onclose = function (e) {
-                    console.log("closed" + e.code + e.reason);
+                    console.log("closed" + e.code + e.reason); //TODO delete
                     connectionStatus = CONNECTION_STATUS.NO_CONNECTION;
                 }
 
@@ -35,7 +34,7 @@ angular.module('socketChat.services', [])
 
             send: function (message) {
                 if (socket != undefined) {
-                    console.log(JSON.stringify(message));
+                    console.log(JSON.stringify(message));//TODO delete
                     socket.send(JSON.stringify(message));
                 }
             },
@@ -58,16 +57,23 @@ angular.module('socketChat.services', [])
             this.content = content;
         }
 
-        function AuthMessage(name, password) {
+        function AuthMessage(login, password) {
             this.type = MESSAGE_TYPE.AUTH;
-            this.name = name;
+            this.login = login;
             this.password = password;
         }
 
-        function RegMessage(name, password) {
+        function RegMessage(login, password, email, name, birthday, address, phone) {
+            var birthday = new Date(birthday);
+
             this.type = MESSAGE_TYPE.REGISTRATION;
-            this.name = name;
+            this.login = login;
             this.password = password;
+            this.email = email;
+            this.name = name;
+            this.address = address;
+            this.phone = phone;
+            this.birthday = moment(birthday).format("dd-MM-yyyy");
         }
 
         function LogoutMessage() {
@@ -82,11 +88,11 @@ angular.module('socketChat.services', [])
             newChatMessage: function (receiver, content) {
                 return new ChatMessage(receiver, content);
             },
-            newAuthMessage: function (name, password) {
-                return new AuthMessage(name, password);
+            newAuthMessage: function (login, password) {
+                return new AuthMessage(login, password);
             },
-            newRegMessage: function (name, password) {
-                return new RegMessage(name, password);
+            newRegMessage: function (login, password, email, name, birthday, address, phone) {
+                return new RegMessage(login, password, email, name, birthday, address, phone);
             },
             newLogoutMessage: function () {
                 return new LogoutMessage();
@@ -99,8 +105,8 @@ angular.module('socketChat.services', [])
 
         var regStatus;
         return {
-            register: function (login, password, service) {
-                service.send(MessageFormatterService.newRegMessage(login, password));
+            register: function (login, password, email, name, birthday, address, phone, service) {
+                service.send(MessageFormatterService.newRegMessage(login, password, email, name, birthday, address, phone));
 
             },
             setRegStatus: function (status) {

@@ -1,0 +1,65 @@
+<div class="reg-window" ng-controller="RegistrationController">
+    <form action="" class="reg-form">
+        <button type="button" class="btn btn-default button-return" aria-label="Left Align" ng-click="toLogin()">
+            <span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span>
+        </button>
+        <h2>Registration</h2>
+
+
+
+        <h5>Mandatory fields:</h5>
+
+        <div class="row">
+            <div class="col-md-2">Email:</label></div>
+            <div class="col-md-10"><input type="email" class="reg-input" id="email" ng-model="email" required></div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-2">Login:</div>
+            <div class="col-md-10"><input type="text" class="reg-input" id="login" ng-model="login" required></div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-2">Password:</div>
+            <div class="col-md-10"><input type="text" class="reg-input" id="password" ng-model="password" required>
+            </div>
+        </div>
+
+        <hr>
+
+        <h5>Optional fields:</h5>
+
+        <div class="row">
+            <div class="col-md-2">Full name:</div>
+            <div class="col-md-10"><input type="text" class="reg-input" id="name" ng-model="name"></div>
+        </div>
+
+
+        <div class="row">
+            <div class="col-md-2">Birthday:</div>
+            <div class="col-md-10"><input type="date" class="reg-input" id="birthday" ng-model="birthday"></div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-2">Home address:</div>
+            <div class="col-md-10"><input type="text" class="reg-input" id="city" ng-model="address"></div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-2">Phone number:</div>
+            <div class="col-md-10"><input type="tel" class="reg-input" id="phone" ng-model="phone"></div>
+        </div>
+
+
+        <div class="row">
+            <input type="submit" class="reg-input button-register" value="Register"
+                   ng-click="register(login, password, email, name, birthday,address, phone)">
+        </div>
+
+
+    </form>
+
+    <div class="centered"><span style="color: red">{{regStatus().description}}</span></div>
+
+
+</div>
