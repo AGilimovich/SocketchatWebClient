@@ -126,17 +126,22 @@ angular.module('socketChat.services', [])
 
                         regStatus = REG_STATUS.ILLEGAL_PASSWORD;
                         break;
-                    case REG_STATUS.ILLEGAL_NAME.code:
+                    case REG_STATUS.ILLEGAL_LOGIN.code:
 
-                        regStatus = REG_STATUS.ILLEGAL_NAME;
+                        regStatus = REG_STATUS.ILLEGAL_LOGIN;
                         break;
                     case REG_STATUS.ILLEGAL_CREDENTIALS.code:
 
                         regStatus = REG_STATUS.ILLEGAL_CREDENTIALS;
                         break;
-                    case REG_STATUS.NAME_EXISTS.code:
+                    case REG_STATUS.LOGIN_EXISTS.code:
 
-                        regStatus = REG_STATUS.NAME_EXISTS;
+                        regStatus = REG_STATUS.LOGIN_EXISTS;
+                        break;
+
+                    case REG_STATUS.EMAIL_EXISTS.code:
+
+                        regStatus = REG_STATUS.EMAIL_EXISTS;
                         break;
 
 
